@@ -13,20 +13,22 @@ headers = {
 # Read the data from the csv file.
 repositories = []
 with open("data/file_paths.csv", "r", newline="", encoding="utf8") as csv_file:
+    #print(os. getcwd())
     csv_reader = csv.reader(csv_file, delimiter=',')
     next(csv_reader, None)
     for row in csv_reader:
+        #print(row)
         repositories.append(
             {"name": row[0], "link": row[1], "default_branch": row[2], "sha": row[3],
              "stargazers_count": row[4], "forks_count": row[5],
-             "Maven": row[6], "Gradle": row[7], "Travis CI": row[8], "Github Actions": row[9]})
+             "Maven": row[7], "Gradle": row[8], "Travis CI": row[9], "Github Actions": row[10]})
 print("Data have been read.")
 
 
 i = 0
 for repository in repositories:
     # Making all columns "No" as default
-
+    print(repository)
     # Maven Dependencies
     repository["MJacoco"] = ""
     repository["MCobertura"] = ""
@@ -52,10 +54,11 @@ for repository in repositories:
     repository["Gyml_jacoco"] = ""
     repository["Gyml_cobertura"] = ""
     repository["Gyml_javadoc"] = ""
-
+    print(repository["Maven"].split(";"))
     # checking if the repository has pom.xml in its files
     if not repository["Maven"] == "":
         file_paths = repository["Maven"].split(";")
+        print(file_paths)
         file_paths.remove("")
         j = 0
         while j < len(file_paths):
@@ -63,14 +66,18 @@ for repository in repositories:
             is_file = file_path.split("/")
             skipped_flag = 1
             if ".xml" not in is_file[len(is_file) - 1]:
+                print('SKIPPED FLAG 0')
                 skipped_flag = 0
             if skipped_flag == 1:
+                print('SKIPPED FLAG 1')
                 try:
                     response = requests.get(url="https://api.github.com/repos/" + repository["name"] + "/contents/" +
                                                 file_path,
                                             headers=headers).json()
                     if "content" in response:
+                        #print('*** Response', response)
                         pom_content = base64.b64decode(response["content"]).decode("utf-8")
+                        #print('pom-content ***', pom_content)
                         repository["MJacoco"] = repository["MJacoco"].replace("Skipped", "", 1)
                         if "jacoco-maven-plugin" in pom_content:
                             repository["MJacoco"] = repository["MJacoco"] + file_path + ";"
