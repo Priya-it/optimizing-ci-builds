@@ -4,7 +4,10 @@ if [[ $1 == "" ]]; then
 	echo "plz give argument link (uses26)"
 fi
 
-rm "cm_sort_Prefix_remove.csv"
+uses_name=$(echo $1 | rev | cut -d'/' -f2 | rev)
+echo ${uses_name}
+rm "${uses_name}_cm_sort_Prefix_remove.csv"
+
 #rm "unsort_Prefix_remove.csv"
 
 cm__a="$1cm__a.csv"
@@ -17,13 +20,13 @@ do
 	prefix_remove=$(sed 's;^.*target/;;g' <<< ${file_name})
 	echo ${prefix_remove} >> "cm_unsort_Prefix_remove.csv"
 done < ${cm__a}
-sort "cm_unsort_Prefix_remove.csv" > "cm_sort_Prefix_remove.csv"
+sort "cm_unsort_Prefix_remove.csv" > "${uses_name}_cm_sort_Prefix_remove.csv"
 rm  "cm_unsort_Prefix_remove.csv"
 
-group_arr=$(cut -f1 -d'/' "cm_sort_Prefix_remove.csv"  | sort | uniq)
+group_arr=$(cut -f1 -d'/' "${uses_name}_cm_sort_Prefix_remove.csv"  | sort | uniq)
 
-echo "group,count" > "cm_Clustering.csv"
+echo "group,count" > "${uses_name}_cm_Clustering.csv"
 for group in ${group_arr[@]}; do
-    count=$(grep -r "$group" "cm_sort_Prefix_remove.csv" | wc -l)
-    echo "$group,$count" >> "cm_Clustering.csv"
+    count=$(grep -r "$group" "${uses_name}_cm_sort_Prefix_remove.csv" | wc -l)
+    echo "$group,$count" >> "${uses_name}_cm_Clustering.csv"
 done
