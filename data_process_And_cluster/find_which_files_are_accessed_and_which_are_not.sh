@@ -6,7 +6,13 @@ if [[ $1 == "" || $2 == "" ]]; then
     exit
 fi
 currentDir=$(pwd)
+if [ -f "$currentDir/Output/$2-never-accessed" ]; then
+    rm "$currentDir/Output/$2-never-accessed"
+fi
 
+if [ -f "$currentDir/Output/$2-accessed" ]; then
+    rm "$currentDir/Output/$2-accessed"
+fi
 dir_arr=($(cd $1 && printf -- '%s\n' */))
 #$(find . -maxdepth 1 -type d -printf '%f\n')
 cd $1
@@ -44,3 +50,11 @@ do
     done
     #fi
 done
+
+#sort -k1 -n -t,  "$currentDir/Output/$2-never-accessed"
+#sort -k1 -n -t,  "$currentDir/Output/$2-accessed"
+#sort -u
+#$(sort -u "$currentDir/Output/$2-never-accessed") > "$currentDir/tmp"
+cat "$currentDir/Output/$2-never-accessed" | sort | uniq > "$currentDir/tmp"
+cp "$currentDir/tmp" "$currentDir/Output/$2-never-accessed" 
+rm "$currentDir/tmp"
