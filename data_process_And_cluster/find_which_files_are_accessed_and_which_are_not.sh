@@ -1,4 +1,11 @@
 #!/bin/bash
+#MavenTestCI
+#remotes/origin/JSqlParser.1671859411
+#remotes/origin/fabric-sdk-java.1672108464
+#jv-fruit-shop.1672108464
+#Algorithms.1671724402
+#mooc-software-testing.1672101501
+#git checkout -f  MavenTestCI.1670985148
 
 if [[ $1 == "" || $2 == "" ]]; then
     echo "give $1 (directory name)"
@@ -55,6 +62,9 @@ done
 #sort -k1 -n -t,  "$currentDir/Output/$2-accessed"
 #sort -u
 #$(sort -u "$currentDir/Output/$2-never-accessed") > "$currentDir/tmp"
-cat "$currentDir/Output/$2-never-accessed" | sort | uniq > "$currentDir/tmp"
+cat "$currentDir/Output/$2-never-accessed" | cut -d',' -f2 > "$currentDir/tmp1"
+cat "$currentDir/tmp1" | sort | uniq > "$currentDir/tmp"
 cp "$currentDir/tmp" "$currentDir/Output/$2-never-accessed" 
+rm "$currentDir/tmp1"
 rm "$currentDir/tmp"
+comm -13 <(sort -u "$currentDir/Output/$2-never-accessed") <(sort -u  "$currentDir/Output/$2-never-accessed") >  "$currentDir/Output/$2-common"
