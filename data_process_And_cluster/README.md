@@ -1,1 +1,1 @@
-bash find_not_accessed_file.sh ../../../My-Project1/ci-analyzes/fabric-sdk-java/1670424990/.github/workflows/build/test/step-details/Integrationtests/ fabric-sdk-java-integration
+bash  find_which_files_are_accessed_and_which_are_not.sh ../../ci-analyzes/mooc-software-testing/1672101501/.github/workflows/maven/build/step-details/ mooc-shanto

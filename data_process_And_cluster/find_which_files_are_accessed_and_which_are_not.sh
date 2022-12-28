@@ -33,38 +33,51 @@ fi
 
 for i in "${dir_arr[@]}"
 do
-        
-    echo "==========$i ========== $(pwd)"
-    #if [[ $i != "." ]]; then
-    for j in "${never_accessed_file_name_array[@]}"
-    do
-        #echo $i$j
-        if [ -f $i$j ]; then
-            echo "Found $i$j"
-            cat "$i$j" >> "$currentDir/Output/$2-never-accessed"
-        else 
-            echo "Not Found"
-        fi
-    done
 
-    for k in "${accessed_file_name_array[@]}"
-    do
-        if [ -f $i$k ]; then
-            echo "pwd =$(pwd)"
-            echo $i$k
-            cat "$i$k" >> "$currentDir/Output/$2-accessed"
-        fi
-    done
+    echo "==========$i ========== $(pwd)"
+    if [[ "$i" =~ .*"checkout".* ]]; then
+        echo "checkout found"
+        continue
+    elif [[ "$i" =~ .*"setup".* ]]; then
+       echo "setup found"
+       continue
+    else
+        for j in "${never_accessed_file_name_array[@]}"
+        do
+            #echo $i$j
+            if [ -f $i$j ]; then
+                echo "Found $i$j"
+                cat "$i$j" >> "$currentDir/Output/$2-never-accessed"
+            else 
+                echo "Not Found"
+            fi
+        done
+
+        for k in "${accessed_file_name_array[@]}"
+        do
+            if [ -f $i$k ]; then
+                echo "pwd =$(pwd)"
+                echo $i$k
+                cat "$i$k" >> "$currentDir/Output/$2-accessed"
+            fi
+        done
+
+    fi
+    #if [[ $i != "." ]]; then
     #fi
 done
 
-#sort -k1 -n -t,  "$currentDir/Output/$2-never-accessed"
-#sort -k1 -n -t,  "$currentDir/Output/$2-accessed"
-#sort -u
-#$(sort -u "$currentDir/Output/$2-never-accessed") > "$currentDir/tmp"
 cat "$currentDir/Output/$2-never-accessed" | cut -d',' -f2 > "$currentDir/tmp1"
 cat "$currentDir/tmp1" | sort | uniq > "$currentDir/tmp"
 cp "$currentDir/tmp" "$currentDir/Output/$2-never-accessed" 
 rm "$currentDir/tmp1"
 rm "$currentDir/tmp"
+
+cat "$currentDir/Output/$2-accessed" | cut -d',' -f2 > "$currentDir/tmp-access"
+cat "$currentDir/tmp-access" | sort | uniq > "$currentDir/tmp-access1"
+cp "$currentDir/tmp-access1" "$currentDir/Output/$2-accessed" 
+
+rm "$currentDir/tmp-access1"
+rm "$currentDir/tmp-access"
+
 comm -13 <(sort -u "$currentDir/Output/$2-never-accessed") <(sort -u  "$currentDir/Output/$2-never-accessed") >  "$currentDir/Output/$2-common"
