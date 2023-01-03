@@ -7,9 +7,10 @@
 #mooc-software-testing.1672101501
 #git checkout -f  MavenTestCI.1670985148
 
-if [[ $1 == "" || $2 == "" ]]; then
+if [[ $1 == "" || $2 == "" || $3 == "" ]]; then
     echo "give $1 (directory name)"
     echo "give $2 (Project name)"
+    echo "give $3 (useful.csv)"
     exit
 fi
 currentDir=$(pwd)
@@ -81,3 +82,15 @@ rm "$currentDir/tmp-access1"
 rm "$currentDir/tmp-access"
 
 comm -13 <(sort -u "$currentDir/Output/$2-never-accessed") <(sort -u  "$currentDir/Output/$2-never-accessed") >  "$currentDir/Output/$2-common"
+
+### Process useful.csv
+cd $currentDir
+row_count=1
+while read line
+do
+    if [[ ${row_count} -gt 1 ]]; then
+        file_name=$(echo $line | cut -d',' -f2)
+        echo $file_name >>  "$currentDir/Output/$2-useful" 
+    fi
+    row_count=$((row_count+1))
+done < $3
